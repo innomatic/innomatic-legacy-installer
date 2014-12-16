@@ -28,28 +28,25 @@ class LegacyPlatformInstaller extends LegacyInstaller
     {
         $downloadPath = $this->getInstallPath($package);
         $fileSystem = new Filesystem();
-        if (!is_dir($downloadPath) || $fileSystem->isDirEmpty($downloadPath)) {
-            return parent::install($repo, $package);
-        }
-
         $actualLegacyDir = $this->innomaticLegacyDir;
         $this->innomaticLegacyDir = $this->generateTempDirName();
-        if ($this->io->isVerbose()) {
-            $this->io->write("Installing in temporary directory.");
+    
+        if (!is_dir($downloadPath) || $fileSystem->isDirEmpty($downloadPath)) {
+            if ($this->io->isVerbose()) {
+                $this->io->write("Installing in temporary directory.");
+            }
+
+            parent::install($repo, $package);
+
+            if ($this->io->isVerbose()) {
+                $this->io->write("Copying to the Innomatic legacy directory.");
+            }
+
+            $fileSystem->copyThenRemove($this->innomaticLegacyDir . '/source/', $actualLegacyDir);
+            $this->innomaticLegacyDir = $actualLegacyDir;
         }
-
-        parent::install($repo, $package);
-
-        if ($this->io->isVerbose()) {
-            $this->io->write("Updating new code over existing installation.");
-        }
-        $fileSystem->copyThenRemove($this->innomaticLegacyDir . '/source', $actualLegacyDir);
-
-        $this->removeBinaries($package);
-        $this->innomaticLegacyDir = $actualLegacyDir;
-        $this->installBinaries($package);
     }
-
+    
     public function updateCode(PackageInterface $initial, PackageInterface $target)
     {
     }
