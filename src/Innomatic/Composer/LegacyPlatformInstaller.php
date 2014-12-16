@@ -43,7 +43,7 @@ class LegacyPlatformInstaller extends LegacyInstaller
         if ($this->io->isVerbose()) {
             $this->io->write("Updating new code over existing installation.");
         }
-        $fileSystem->copyThenRemove($this->innomaticLegacyDir, $actualLegacyDir);
+        $fileSystem->copyThenRemove($this->innomaticLegacyDir . '/source', $actualLegacyDir);
 
         $this->removeBinaries($package);
         $this->innomaticLegacyDir = $actualLegacyDir;
