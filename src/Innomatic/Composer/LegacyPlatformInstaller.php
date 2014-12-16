@@ -16,7 +16,7 @@ class LegacyPlatformInstaller extends LegacyInstaller
 {
     public function supports($packageType)
     {
-        return $packageType === 'innomatic-legacy-kernel';
+        return $packageType === 'innomatic-legacy-platform';
     }
 
     public function isInstalled(InstalledRepositoryInterface $repo, PackageInterface $package)
