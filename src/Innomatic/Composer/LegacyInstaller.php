@@ -15,7 +15,7 @@ abstract class LegacyInstaller extends LibraryInstaller
     {
         parent::__construct($io, $composer, $type);
         $options = $composer->getPackage()->getExtra();
-        $this->innomaticLegacyDir = isset($options['innomatic-legacy-dir']) ? rtrim($options['innomatic-legacy-dir'], '/') : '.';
+        $this->innomaticLegacyDir = isset($options['innomatic-legacy-dir']) ? rtrim($options['innomatic-legacy-dir'], '/') : 'innomatic_legacy';
     }
 
     public function getInstallPath(PackageInterface $package)
