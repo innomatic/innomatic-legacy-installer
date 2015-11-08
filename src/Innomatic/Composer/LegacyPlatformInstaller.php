@@ -66,7 +66,7 @@ class LegacyPlatformInstaller extends LegacyInstaller
     {
         $tmpDir = sys_get_temp_dir() . '/' . uniqid('composer_innomaticlegacy_');
         if ($this->io->isVerbose()) {
-            $this->io->write("Temporary directory for innomatic legacy platform updates: $tmpDir");
+            $this->io->write("Temporary directory for Innomatic legacy platform updates: $tmpDir");
         }
 
         return $tmpDir;
