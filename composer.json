@@ -6,7 +6,7 @@
 	"minimum-stability" : "dev",
 	"authors" : [{
 			"name" : "Alex Pagnoni",
-			"email" : "alex.pagnoni@innomatic.io"
+			"email" : "alex.pagnoni@innoteam.io"
 		}
 	],
 	"autoload" : {
@@ -22,7 +22,7 @@
 	},
 	"homepage" : "http://www.innomatic.io",
 	"support" : {
-		"email" : "support@innomatic.io",
+		"email" : "support@innoteam.io",
 		"wiki" : "https://innomatic.atlassian.net/wiki/display/MAIN"
 	}
 }
