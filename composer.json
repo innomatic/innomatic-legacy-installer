@@ -3,7 +3,6 @@
 	"type" : "composer-plugin",
 	"description" : "Installer for Innomatic legacy application and legacy platform itself.",
 	"license" : "BSD-3-Clause",
-	"minimum-stability" : "dev",
 	"authors" : [{
 			"name" : "Alex Pagnoni",
 			"email" : "alex.pagnoni@innoteam.io"
@@ -18,7 +17,7 @@
 		"class" : "Innomatic\\Composer\\InstallerPlugin"
 	},
 	"require" : {
-		"composer-plugin-api" : "1.0.0"
+		"composer-plugin-api" : "^1.0"
 	},
 	"homepage" : "http://www.innomatic.io",
 	"support" : {
