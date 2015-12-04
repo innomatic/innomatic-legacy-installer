@@ -18,6 +18,7 @@ use Composer\IO\IOInterface;
 use Composer\Repository\InstalledRepositoryInterface;
 use Composer\Package\PackageInterface;
 use Composer\Util\Filesystem;
+use Innomatic\Core\MVC\Legacy\Kernel;
 
 /**
  * Installer for Innomatic legacy platform.
@@ -41,7 +42,7 @@ class LegacyPlatformInstaller extends LegacyInstaller
         $fileSystem = new Filesystem();
         $actualLegacyDir = $this->innomaticLegacyDir;
         $this->innomaticLegacyDir = $this->generateTempDirName();
-    
+
         if (!is_dir($downloadPath) || $fileSystem->isDirEmpty($downloadPath)) {
             if ($this->io->isVerbose()) {
                 $this->io->write("Installing in temporary directory.");
@@ -57,9 +58,34 @@ class LegacyPlatformInstaller extends LegacyInstaller
             $this->innomaticLegacyDir = $actualLegacyDir;
         }
     }
-    
+
     public function updateCode(PackageInterface $initial, PackageInterface $target)
     {
+        $actualLegacyDir = $this->innomaticLegacyDir;
+        $this->innomaticLegacyDir = $packageDir = $this->generateTempDirName();
+        if ($this->io->isVerbose()) {
+            $this->io->write( "Installing in temporary directory." );
+        }
+        $this->installCode($target);
+        $fileSystem = new Filesystem();
+        if ($this->io->isVerbose()) {
+            $this->io->write( "Updating new code over existing installation." );
+        }
+
+        $legacyKernel = new Kernel();
+        $this->io->write('Upgrade in corso');
+        $legacyKernel->runCallback(
+            function () use ($packageDir) {
+                $app = new \Innomatic\Application\Application(InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess());
+                $result = $app->install($packageDir);
+            }
+        );
+
+        $this->io->write('Upgrade effettuato');
+
+        $fileSystem->remove($this->innomaticLegacyDir);
+
+        $this->innomaticLegacyDir = $actualLegacyDir;
     }
 
     protected function generateTempDirName()
