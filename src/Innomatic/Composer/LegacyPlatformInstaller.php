@@ -72,17 +72,7 @@ class LegacyPlatformInstaller extends LegacyInstaller
             $this->io->write( "Updating Innomatic over existing installation." );
         }
 
-        // Add vendor autoloads to access Innomatic Legacy Kernel bridge
-        $vendorDir = $this->composer->getConfig()->get('vendor-dir');
-        require $vendorDir.'/autoload.php';
-
-        $legacyKernel = new Kernel();
-        $legacyKernel->runCallback(
-            function () use ($packageDir) {
-                $app = new \Innomatic\Application\Application(InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess());
-                $result = $app->install($packageDir);
-            }
-        );
+        $this->deployApplication($packageDir);
 
         if ($this->io->isVerbose()) {
             $this->io->write( "Innomatic upgrade finished." );
