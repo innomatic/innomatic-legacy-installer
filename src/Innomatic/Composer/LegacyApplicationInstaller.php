@@ -18,7 +18,6 @@ use Composer\IO\IOInterface;
 use Composer\Repository\InstalledRepositoryInterface;
 use Composer\Package\PackageInterface;
 use Composer\Util\Filesystem;
-use Innomatic\Core\MVC\Legacy\Kernel;
 
 class LegacyApplicationInstaller extends LegacyInstaller
 {
@@ -50,17 +49,7 @@ class LegacyApplicationInstaller extends LegacyInstaller
             $this->io->write("Installing inside Innomatic legacy.");
         }
 
-        // Add vendor autoloads to access Innomatic Legacy Kernel bridge
-        $vendorDir = $this->composer->getConfig()->get('vendor-dir');
-        require $vendorDir.'/autoload.php';
-
-        $legacyKernel = new Kernel();
-        $legacyKernel->runCallback(
-            function () use ($packageDir) {
-                $app = new \Innomatic\Application\Application(InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess());
-                $result = $app->install($packageDir);
-            }
-        );
+        $this->deployApplication($packageDir);
 
         $fileSystem->remove($this->innomaticLegacyDir);
         $this->innomaticLegacyDir = $actualLegacyDir;
@@ -79,22 +68,18 @@ class LegacyApplicationInstaller extends LegacyInstaller
             $this->io->write( "Updating Innomatic application over existing installation." );
         }
 
-        // Add vendor autoloads to access Innomatic Legacy Kernel bridge
-        $vendorDir = $this->composer->getConfig()->get('vendor-dir');
-        require $vendorDir.'/autoload.php';
-
-        $legacyKernel = new Kernel();
-        $legacyKernel->runCallback(
-            function () use ($packageDir) {
-                $app = new \Innomatic\Application\Application(InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess());
-                $result = $app->install($packageDir);
-            }
-        );
+        $this->deployApplication($packageDir);
 
         if ($this->io->isVerbose()) {
             $this->io->write( "Innomatic application upgrade finished." );
         }
 
         $fileSystem->remove($this->innomaticLegacyDir);
+    }
+
+    protected function removeCode(PackageInterface $package)
+    {
+        $downloadPath = $this->getPackageBasePath($package);
+        //$this->downloadManager->remove($package, $downloadPath);
     }
 }

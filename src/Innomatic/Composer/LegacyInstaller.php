@@ -17,6 +17,7 @@ use Composer\Composer;
 use Composer\IO\IOInterface;
 use Composer\Installer\LibraryInstaller;
 use Composer\Package\PackageInterface;
+use Innomatic\Core\MVC\Legacy\Kernel;
 
 abstract class LegacyInstaller extends LibraryInstaller
 {
@@ -46,5 +47,40 @@ abstract class LegacyInstaller extends LibraryInstaller
         }
 
         return $tmpDir;
+    }
+
+    protected function deployApplication($packageDir)
+    {
+        // Add vendor autoloads to access Innomatic Legacy Kernel bridge
+        $vendorDir = $this->composer->getConfig()->get('vendor-dir');
+        require $vendorDir.'/autoload.php';
+
+        $legacyKernel = new Kernel();
+        $result = $legacyKernel->runCallback(
+            function () use ($packageDir) {
+                $app = new \Innomatic\Application\Application(InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess());
+
+                $result['status'] = true;
+                $result['unmetdeps'] = '';
+
+                if (!$app->install($packageDir)) {
+                    $unmetDeps = $app->getLastActionUnmetDeps();
+                    $unmetDepsStr = '';
+
+                    while (list(, $val) = each($unmetDeps)) {
+                        $unmetDepsStr .= ' '.$val;
+                    }
+
+                    $result['status'] = false;
+                    $result['unmetdeps'] = $unmetDepsStr;
+                }
+
+                return $result;
+            }
+        );
+
+        if (!$result['status']) {
+            throw new \RuntimeException("Dependencies error:".$result['unmetdeps']);
+        }
     }
 }
