@@ -37,4 +37,14 @@ abstract class LegacyInstaller extends LibraryInstaller
 
         return $this->innomaticLegacyDir;
     }
+
+    protected function generateTempDirName()
+    {
+        $tmpDir = sys_get_temp_dir() . '/' . uniqid('composer_innomaticlegacy_');
+        if ($this->io->isVerbose()) {
+            $this->io->write("Temporary directory for Innomatic legacy platform updates: $tmpDir");
+        }
+
+        return $tmpDir;
+    }
 }
