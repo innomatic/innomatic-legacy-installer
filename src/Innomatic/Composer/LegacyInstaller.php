@@ -83,4 +83,33 @@ abstract class LegacyInstaller extends LibraryInstaller
             throw new \RuntimeException("Dependencies error:".$result['unmetdeps']);
         }
     }
+
+    protected function undeployApplication(PackageInterface $package)
+    {
+        // Add vendor autoloads to access Innomatic Legacy Kernel bridge
+        $vendorDir = $this->composer->getConfig()->get('vendor-dir');
+        require $vendorDir.'/autoload.php';
+
+        $appName = $package->getName();
+        $appName = substr($appName, strpos($appName, '/') + 1);
+
+        $legacyKernel = new Kernel();
+        $result = $legacyKernel->runCallback(
+            function () use ($appName) {
+                $appId = \Innomatic\Application\Application::getAppIdFromName($appName);
+                $app = new \Innomatic\Application\Application(InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), $appId);
+                return $app->uninstall();
+
+                /*
+                 * Due to different handling of dependencies uninstall order
+                 * in Composer, we ignore applications that cannot be
+                 * uninstalled.
+                 */
+            }
+        );
+
+        if (!$result) {
+            $this->io->write("<error>Application $appName must be manually uninstalled from Innomatic due to reversed dependencies</error>");
+        }
+    }
 }

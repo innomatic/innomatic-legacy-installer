@@ -79,7 +79,6 @@ class LegacyApplicationInstaller extends LegacyInstaller
 
     protected function removeCode(PackageInterface $package)
     {
-        $downloadPath = $this->getPackageBasePath($package);
-        //$this->downloadManager->remove($package, $downloadPath);
+        $this->undeployApplication($package);
     }
 }
