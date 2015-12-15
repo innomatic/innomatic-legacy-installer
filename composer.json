@@ -2,7 +2,7 @@
 	"name" : "innomatic/innomatic-legacy-installer",
 	"type" : "composer-plugin",
 	"description" : "Installer for Innomatic legacy application and legacy platform itself.",
-	"license" : "GPL-2.0",
+	"license" : "MIT",
 	"authors" : [{
 			"name" : "Innomatic Team",
             "homepage": "http://www.innomatic.io"
